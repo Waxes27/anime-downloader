@@ -1,6 +1,10 @@
 import requests
 import os
 
+def clear():
+    os.system("clear")
+
+clear()
 def anime_name():
     return input(" What anime do you want to download: ").split()
 
@@ -27,6 +31,7 @@ def dub_or_sub(anime_urls):
 
 
     dub_sub = input("1. English(Dub)\n2. Japanese(Sub)\n(1./2.) > ")
+    clear()
 
 
     dublist = []
@@ -36,11 +41,12 @@ def dub_or_sub(anime_urls):
         for i in anime_urls:
             if '-dub' in i:
                 dublist.append(i)
+                print(i)
                 return dub_sub, dublist
         
     else:           
         for i in anime_urls:
-            print(i)
+            # print(i)
             if '-dub' not in i:
                 sublist.append(i)
                 print(i)
@@ -52,23 +58,27 @@ def dub_or_sub(anime_urls):
 
 def main():
     anime = anime_name()
-    site, anime_dash = anime_site_name(anime)
+    try:
+        site, anime_dash = anime_site_name(anime)
+    except TypeError:
+        return
     anime_urls = anime_url_finder(site, anime_dash)
     try:
         dub_sub, list_of_anime = dub_or_sub(anime_urls)
     except TypeError:
-        print(f"Anime '{anime[0:]}' not found")
+        print(f"Anime '{' '.join(anime[0:])}' not found, Please try a different or more specific search\n\n")
         main()
         return
     # os.system("clear")
     print("Description:\n\n")
-    for i in range(10):
-        content = requests.get(list_of_anime[i]).text
-        description = content.split('itemprop="description">')[1].split('</p>')[0]
-        print(description,"\n\n")
+
+    content = requests.get(list_of_anime[0]).text
+    description = content.split('itemprop="description">')[1].split('</p>')[0]
+    print(description,"\n\n")
     download = input("Download? (Enter)/(CTRL + C): ")
     
 
 main()
+
 
 
